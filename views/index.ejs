@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="/javascripts/script.js"></script>  
+    <link href="/stylesheets/style.css" rel="stylesheet"/>
+  </head>
+  <body>
+
+      <div class="album py-5 bg-light">
+        <div class="container">
+          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+            <% images.forEach((image) => { %>
+              <div class="col">
+                <div class="card shadow-sm">
+
+                  <% link="" %>
+                  <% if(image.search("folder") >= 0) { %>
+                    <% link="/" + image.substr(image.lastIndexOf("/") + 1, image.lastIndexOf("_thumb") - 1) %>
+                  <% } %>
+                  <a id="<%= image %>" onclick="galleryView(this.id)">
+                    <% if(image.search("new") >= 0) { %>
+                      <img class="centered-and-cropped" width="100%" height="225" src="<%= image.substr(0, image.search("_new")) + ".jpg" %>">
+                    <% } else { %>
+                      <img class="centered-and-cropped" width="100%" height="225" src="<%= image %>">
+                    <% } %>
+                  </a>
+                  
+                  <% if(image.search("new") >= 0) { %>
+                    <div class="ribbon-wrapper-red">
+                      <div class="ribbon-red">New</div>
+                    </div>
+                  <% } %>
+
+                  <div class="card-body">
+                    <p class="card-text"><%= image.substr(image.lastIndexOf("/") + 1, image.search("_thumb") - image.lastIndexOf("/") - 1) %></p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      
+                      <% buttonfolder="" %>
+                      <% if(image.search("folder") >= 0) { %>
+                        <% buttonfolder="disabled" %>
+                      <% } %>
+                      <div class="btn-group">
+                        <button id="<%= image %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryView(this.id)">View</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" <%= buttonfolder %>>Share</button>
+                        <button id="<%= image %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="deleteImage(this.id)" <%= buttonfolder %>>Delete</button>
+                      </div>
+
+                      <% type="PHOTO" %>
+                      <% if(image.search("video") >= 0) { %>
+                        <% type="VIDEO" %>
+                      <% } %>
+                      <% if(image.search("folder") >= 0) { %>
+                        <% type="PHOTOS" %>
+                      <% } %>
+                      <small class="text-muted text-end"><%= type %></small>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            <% }) %>
+
+            <!-- Back Section -->
+            <% if(url.substr(url.lastIndexOf("/") + 1, url.length) != "gallery") { %>
+              <div class="col">
+                <div class="card shadow-sm">
+                  <a href="/gallery">
+                    <img class="centered-and-cropped" width="100%" height="225" src="/images/back.jpg">
+                  </a>
+                  <div class="card-body">
+                    <p class="card-text">Return Back</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>View</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Share</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Section -->
+      <div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <!-- <div class="modal-header">
+              <h5 class="modal-title" id="galleryModalTitle">Modal title</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div> -->
+            <div class="modal-body">
+              <img class="centered-and-cropped" id="galleryModalImage" width="100%" src="">
+              <video id="galleryModalVideo" width="100%" controls autoplay>
+                <!-- <source id="galleryModalVideoSrc" src="" type="video/mp4"> -->
+              </video>
+              <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+  </body>
+</html>
