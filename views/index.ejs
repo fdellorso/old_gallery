@@ -14,52 +14,42 @@
 
       <div class="album py-5 bg-light">
         <div class="container">
-          <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+          <div class="row">
 
             <% images.forEach((image) => { %>
-              <div class="col">
-                <div class="card shadow-sm">
-
-                  <% link="" %>
-                  <% if(image.search("folder") >= 0) { %>
-                    <% link="/" + image.substr(image.lastIndexOf("/") + 1, image.lastIndexOf("_thumb") - 1) %>
+              <div class="col-lg-4">
+                <div class="card mb-4 shadow-sm">
+                  
+                  <% imagefile=image.substr(0, image.search("_thumb")) + "_thumb.jpg" %>
+                  <% imagename=image.substr(image.lastIndexOf("/") + 1, image.search("_thumb") - image.lastIndexOf("/") - 1) %>
+                  <% imagetype=image.substr(image.lastIndexOf("_thumb") + "_thumb".length + 1, image.lastIndexOf(".") - image.lastIndexOf("_thumb") - "_thumb".length - 1) %>
+                  <% newfile=image.search("new") >= 0 ? 1 : 0 %>
+                  <% if(newfile) { %>
+                    <% imagetype=image.substr(image.search("_thumb") + "_thumb".length + 1, image.search("_new") - image.search("_thumb") - "_thumb".length - 1) %>
                   <% } %>
-                  <a id="<%= image %>" onclick="galleryView(this.id)">
-                    <% if(image.search("new") >= 0) { %>
-                      <img class="centered-and-cropped" width="100%" height="225" src="<%= image.substr(0, image.search("_new")) + ".jpg" %>">
-                    <% } else { %>
-                      <img class="centered-and-cropped" width="100%" height="225" src="<%= image %>">
-                    <% } %>
+                  <% imageid=imagename + "_" + imagetype %>
+
+                  <a id="<%= imageid %>" onclick="galleryView(this.id)">
+                      <img class="centered-and-cropped" width="100%" height="225" src="<%= imagefile %>">
                   </a>
                   
-                  <% if(image.search("new") >= 0) { %>
+                  <% if(newfile) { %>
                     <div class="ribbon-wrapper-red">
                       <div class="ribbon-red">New</div>
                     </div>
                   <% } %>
 
                   <div class="card-body">
-                    <p class="card-text"><%= image.substr(image.lastIndexOf("/") + 1, image.search("_thumb") - image.lastIndexOf("/") - 1) %></p>
+                    <p class="card-text"><%= imagename %></p>
                     <div class="d-flex justify-content-between align-items-center">
                       
-                      <% buttonfolder="" %>
-                      <% if(image.search("folder") >= 0) { %>
-                        <% buttonfolder="disabled" %>
-                      <% } %>
                       <div class="btn-group">
-                        <button id="<%= image %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryView(this.id)">View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" <%= buttonfolder %>>Share</button>
-                        <button id="<%= image %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="deleteImage(this.id)" <%= buttonfolder %>>Delete</button>
+                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryView(this.id)">View</button>
+                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryShare(this.id)">Share</button>
+                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryDelete(this.id)">Delete</button>
                       </div>
 
-                      <% type="PHOTO" %>
-                      <% if(image.search("video") >= 0) { %>
-                        <% type="VIDEO" %>
-                      <% } %>
-                      <% if(image.search("folder") >= 0) { %>
-                        <% type="PHOTOS" %>
-                      <% } %>
-                      <small class="text-muted text-end"><%= type %></small>
+                      <small class="text-muted text-end"><%= imagetype.toUpperCase() %></small>
 
                     </div>
                   </div>
@@ -70,8 +60,8 @@
 
             <!-- Back Section -->
             <% if(url.substr(url.lastIndexOf("/") + 1, url.length) != "gallery") { %>
-              <div class="col">
-                <div class="card shadow-sm">
+              <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
                   <a href="/gallery">
                     <img class="centered-and-cropped" width="100%" height="225" src="/images/back.jpg">
                   </a>
@@ -104,7 +94,7 @@
             <div class="modal-body">
               <img class="centered-and-cropped" id="galleryModalImage" width="100%" src="">
               <video id="galleryModalVideo" width="100%" controls autoplay>
-                <!-- <source id="galleryModalVideoSrc" src="" type="video/mp4"> -->
+                <source id="galleryModalVideoSrc" src="" type="video/mp4">
               </video>
               <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
             </div>
