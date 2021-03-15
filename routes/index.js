@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 
+var fs = require('fs');
+
 var galleryArrays = require('../controller/galleryarray');
 var GalleryArray = galleryArrays.GalleryArray;
 
@@ -30,9 +32,19 @@ router.get('/:id', async (req, res, next) => {
   });
 });
 
-function timeout(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+// function timeout(ms) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
+
+router.post('/:id', async (req, res, next) => {
+  var files = fs.readdirSync(dirgallery + req.params.id + '/');
+  for (var index = 0; index < files.length; index++) {
+    if (files[index].search('thumb') >= 0) {
+      files.splice(index, 1);
+    }
+  }
+  res.send(files);
+});
 
 router.delete('/:id', async (req, res, next) => {
   console.log(req.params.id);
