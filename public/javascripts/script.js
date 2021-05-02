@@ -147,6 +147,63 @@ function galleryDelete(clicked_id) {
   xhr.send(null);
 }
 
+function gallery360(clicked_id) {
+  // var anchor = document.getElementById('a.' + clicked_id);
+
+  // var image = document.getElementById('img.' + clicked_id);
+  var div360 = document.getElementById('jsv.holder.' + clicked_id);
+  // var img360 = document.getElementById('jsv.image.' + clicked_id);
+
+  // if (image.style.display != 'none') {
+  // image.style.display = 'none';
+  // div360.style.display = 'inline';
+  // img360.style.display = 'inline';
+
+  if (div360.childElementCount == 1) {
+    var viewer = new JavascriptViewer({
+      mainHolderId: 'jsv.holder.' + clicked_id,
+      mainImageId: 'jsv.image.' + clicked_id,
+      totalFrames: 72,
+      speed: 70,
+      defaultProgressBar: true,
+    });
+
+    // use events for example
+    viewer.events().loadImage.on((progress) => {
+      // use this for your own progress bar
+      console.log(`loading ${progress.percentage}%`);
+    });
+    // }
+
+    viewer.events().started.on((result) => {
+      // use a promise or a start event to trigger things
+    });
+
+    viewer.start().then(() => {
+      // viewer.rotateDegrees(180).then(() => {
+      //   // continue with your amazing intro
+      // });
+    });
+  } else {
+    // div360.style.display = 'none';
+    // img360.style.display = 'none';
+    // image.style.display = 'inline';
+  }
+
+  // var divisor = document.createElement('div');
+  // divisor.id = 'jsv.holder.' + clicked_id;
+
+  // var img360 = document.createElement('img');
+  // img360.id = 'jsv.image.' + clicked_id;
+  // img360.className = 'centered-and-cropped';
+  // img360.width = '100%';
+  // img360.height = '225';
+  // img360.src = 'https://360-javascriptviewer.com/images/ipod/ipod.jpg';
+
+  // divisor.appendChild(img360);
+  // anchor.appendChild(divisor);
+}
+
 $(function () {
   // Gets the video src from the data-src on each button
   $('#galleryModal').on('hidden.bs.modal', function (event) {

@@ -6,8 +6,9 @@
     <script src="/jquery/dist/jquery.min.js"></script>
     <link href="/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/@3dweb/360javascriptviewer/lib/JavascriptViewer.js"></script>
 
-    <script src="/javascripts/script.js"></script>  
+    <script src="/javascripts/script.js"></script>
     <link href="/stylesheets/style.css" rel="stylesheet"/>
   </head>
   <body>
@@ -30,7 +31,12 @@
                   <% imageid=imagename + "_" + imagetype %>
 
                   <a id="<%= imageid %>" onclick="galleryView(this.id)">
-                      <img class="centered-and-cropped" width="100%" height="225" src="<%= imagefile %>">
+                      <img id="img.<%= imageid %>" class="centered-and-cropped" width="100%" height="225" src="<%= imagefile %>">
+                      <!-- < if(imagetype == "folder") { %>
+                        <div id="jsv.holder.< imageid %>">
+                          <img id="jsv.image.< imageid %>" src="https://360-javascriptviewer.com/images/ipod/ipod.jpg">
+                        </div>
+                      < } %> -->
                   </a>
                   
                   <% if(newfile) { %>
@@ -44,12 +50,15 @@
                     <div class="d-flex justify-content-between align-items-center">
                       
                       <div class="btn-group">
-                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryView(this.id)">View</button>
-                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryShare(this.id)">Share</button>
-                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-secondary" onclick="galleryDelete(this.id)">Delete</button>
+                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-primary" onclick="galleryView(this.id)">View</button>
+                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-success" onclick="galleryShare(this.id)">Share</button>
+                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-danger" onclick="galleryDelete(this.id)">Delete</button>
+                        <% if(imagetype == "folder") { %>
+                          <button id="<%= imageid %>" type="button" class="btn btn-sm btn-bootstrap" data-toggle="button" aria-pressed="false" onclick="">360</button>
+                        <% } %>
                       </div>
 
-                      <small class="text-muted text-end"><%= imagetype.toUpperCase() %></small>
+                      <!-- <small class="text-muted text-end">< imagetype.toUpperCase() %></small> -->
 
                     </div>
                   </div>

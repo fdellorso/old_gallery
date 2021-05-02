@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@3dweb/360javascriptviewer": "^1.8.9",
     "@mapbox/node-pre-gyp": "^1.0.0",
     "@popperjs/core": "^2.8.4",
     "@settlin/collage": "^1.4.7",
