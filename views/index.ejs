@@ -17,94 +17,98 @@
         <div class="container">
           <div class="row">
 
+            <!-- Album Section -->
             <% images.forEach((image) => { %>
-              <div class="col-lg-4">
-                <div class="card mb-4 shadow-sm">
-                  
-                  <% imagefile=image.substr(0, image.search("_thumb")) + "_thumb.jpg" %>
-                  <% imagename=image.substr(image.lastIndexOf("/") + 1, image.search("_thumb") - image.lastIndexOf("/") - 1) %>
-                  <% imagetype=image.substr(image.lastIndexOf("_thumb") + "_thumb".length + 1, image.lastIndexOf(".") - image.lastIndexOf("_thumb") - "_thumb".length - 1) %>
-                  <% newfile=image.search("new") >= 0 ? 1 : 0 %>
-                  <% if(newfile) { %>
-                    <% imagetype=image.substr(image.search("_thumb") + "_thumb".length + 1, image.search("_new") - image.search("_thumb") - "_thumb".length - 1) %>
+            <div class="col-md-4">
+              <div class="card mb-4 shadow rounded">
+                
+                <% imagefile=image.substr(0, image.search("_thumb")) + "_thumb.jpg" %>
+                <% imagename=image.substr(image.lastIndexOf("/") + 1, image.search("_thumb") - image.lastIndexOf("/") - 1) %>
+                <% imagetype=image.substr(image.lastIndexOf("_thumb") + "_thumb".length + 1, image.lastIndexOf(".") - image.lastIndexOf("_thumb") - "_thumb".length - 1) %>
+                <% newfile=image.search("new") >= 0 ? 1 : 0 %>
+                <% if(newfile) { %>
+                <% imagetype=image.substr(image.search("_thumb") + "_thumb".length + 1, image.search("_new") - image.search("_thumb") - "_thumb".length - 1) %>
+                <% } %>
+                <% imageid=imagename + "_" + imagetype %>
+
+                <a id="a.<%= imageid %>" onclick="galleryView(this.id)">
+                  <% if(imagetype == "360") { %>
+                  <img id="img.<%= imageid %>" class="centered-and-cropped" width="100%" height="210" src="<%= imagename + '/' + imagefile %>">
+                  <% } else { %>
+                  <img id="img.<%= imageid %>" class="centered-and-cropped" width="100%" height="210" src="<%= imagefile %>">
                   <% } %>
-                  <% imageid=imagename + "_" + imagetype %>
-
-                  <a id="<%= imageid %>" onclick="galleryView(this.id)">
-                      <img id="img.<%= imageid %>" class="centered-and-cropped" width="100%" height="225" src="<%= imagefile %>">
-                      <!-- < if(imagetype == "folder") { %>
-                        <div id="jsv.holder.< imageid %>">
-                          <img id="jsv.image.< imageid %>" src="https://360-javascriptviewer.com/images/ipod/ipod.jpg">
-                        </div>
-                      < } %> -->
-                  </a>
-                  
-                  <% if(newfile) { %>
-                    <div class="ribbon-wrapper-red">
-                      <div class="ribbon-red">New</div>
-                    </div>
-                  <% } %>
-
-                  <div class="card-body">
-                    <p class="card-text"><%= imagename %></p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      
-                      <div class="btn-group">
-                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-primary" onclick="galleryView(this.id)">View</button>
-                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-success" onclick="galleryShare(this.id)">Share</button>
-                        <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-danger" onclick="galleryDelete(this.id)">Delete</button>
-                        <% if(imagetype == "folder") { %>
-                          <button id="<%= imageid %>" type="button" class="btn btn-sm btn-bootstrap" data-toggle="button" aria-pressed="false" onclick="">360</button>
-                        <% } %>
-                      </div>
-
-                      <!-- <small class="text-muted text-end">< imagetype.toUpperCase() %></small> -->
-
-                    </div>
-                  </div>
-
+                </a>
+                
+                <% if(newfile) { %>
+                <div class="ribbon-wrapper-red">
+                  <div class="ribbon-red">New</div>
                 </div>
+                <% } %>
+
+                <div class="card-body">
+                  <p class="card-text"><%= imagename %></p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    
+                    <div class="btn-group">
+                      <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-primary" onclick="galleryView(this.id)">View</button>
+                      <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-success" onclick="galleryShare(this.id)">Share</button>
+                      <button id="<%= imageid %>" type="button" class="btn btn-sm btn-outline-danger" onclick="galleryDelete(this.id)">Delete</button>
+                      <% if(imagetype == "360") { %>
+                      <button id="<%= imageid %>" type="button" class="btn btn-sm btn-bootstrap" data-toggle="button" aria-pressed="false" onclick="gallery360(this.id)">360</button>
+                      <% } %>
+                    </div>
+
+                    <!-- <small class="text-muted text-end">< imagetype.toUpperCase() %></small> -->
+
+                  </div>
+                </div>
+
               </div>
+            </div>
             <% }) %>
 
             <!-- Back Section -->
             <% if(url.substr(url.lastIndexOf("/") + 1, url.length) != "gallery") { %>
-              <div class="col-md-4">
-                <div class="card mb-4 shadow-sm">
-                  <a href="/gallery">
-                    <img class="centered-and-cropped" width="100%" height="225" src="/images/back.jpg">
-                  </a>
-                  <div class="card-body">
-                    <p class="card-text">Return Back</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div class="btn-group">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>View</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Share</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Delete</button>
-                      </div>
+            <div class="col-md-4">
+              <div class="card mb-4 shadow rounded">
+                <a href="/gallery">
+                  <img class="centered-and-cropped" width="100%" height="210" src="/images/back.jpg">
+                </a>
+                <div class="card-body">
+                  <p class="card-text">Return Back</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-sm btn-outline-secondary" disabled>View</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Share</button>
+                      <button type="button" class="btn btn-sm btn-outline-secondary" disabled>Delete</button>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
             <% } %>
 
           </div>
         </div>
       </div>
 
+      <div class="spinner-grow text-warning loadSpin" id="loadSpin" role="status" hidden="true">
+        <span class="sr-only">Loading...</span>
+      </div>
+
       <!-- Modal Section -->
       <div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
           <div class="modal-content">
             <!-- <div class="modal-header">
               <h5 class="modal-title" id="galleryModalTitle">Modal title</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div> -->
             <div class="modal-body">
-              <img class="centered-and-cropped" id="galleryModalImage" width="100%" src="">
-              <video id="galleryModalVideo" width="100%" controls autoplay>
-                <source id="galleryModalVideoSrc" src="" type="video/mp4">
+              <video id="vid.galleryModal" width="100%" controls autoplay>
+                <source id="vidsrc.galleryModal" src="" type="video/mp4">
               </video>
+              <img id="img.galleryModal" class="centered-and-cropped" width="100%" src="">
               <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button> -->
             </div>
             <!-- <div class="modal-footer">

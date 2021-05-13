@@ -1,7 +1,8 @@
 var fs = require('fs');
 var del = require('del');
 var ffmpeg = require('fluent-ffmpeg');
-var createCollage = require('@settlin/collage');
+// var createCollage = require('@settlin/collage');
+var sharp = require('sharp');
 
 async function videoThumbnail(videofile, thumbfile) {
   var thumbfolder = videofile.substr(0, videofile.lastIndexOf('/') + 1);
@@ -11,7 +12,7 @@ async function videoThumbnail(videofile, thumbfile) {
         timestamps: [5.0],
         filename: thumbfile,
         folder: thumbfolder,
-        size: '300x225',
+        size: '280x210',
       })
       .on('end', () => {
         resolve();
@@ -19,25 +20,41 @@ async function videoThumbnail(videofile, thumbfile) {
   });
 }
 
-async function photosCollage(photosArray, thumbfile, rows, cols) {
-  var options = {
-    sources: photosArray,
-    width: rows,
-    height: cols,
-    imageWidth: 300 / rows,
-    imageHeight: 225 / cols,
-    spacing: 0,
-  };
+// async function photosCollage(photosArray, thumbfile, rows, cols) {
+//   var options = {
+//     sources: photosArray,
+//     width: rows,
+//     height: cols,
+//     imageWidth: 280 / rows,
+//     imageHeight: 210 / cols,
+//     spacing: 0,
+//   };
 
+//   await new Promise((resolve) => {
+//     createCollage(options).then((canvas) => {
+//       const src = canvas.jpegStream();
+//       const dest = fs.createWriteStream(thumbfile);
+//       src.pipe(dest);
+//       dest.on('finish', () => {
+//         resolve();
+//       });
+//     });
+//   });
+// }
+
+async function photoThumbnail(photo, thumbfile) {
   await new Promise((resolve) => {
-    createCollage(options).then((canvas) => {
-      const src = canvas.jpegStream();
-      const dest = fs.createWriteStream(thumbfile);
-      src.pipe(dest);
-      dest.on('finish', () => {
+    sharp(photo)
+      .resize({ width: 280, height: 210 })
+      .jpeg({ quality: 100 })
+      .toFile(thumbfile)
+      .then((data) => {
+        console.log(data);
         resolve();
+      })
+      .catch((err) => {
+        console.log(err);
       });
-    });
   });
 }
 
@@ -101,7 +118,14 @@ class GalleryImage {
       return 'photo';
     }
     if (this.extension == '') {
-      return 'folder';
+      var folderfile = fs.readdirSync(
+        this.galleryfolder + this.foldername + this.filename + '/'
+      );
+      if (folderfile.length >= 60) {
+        return '360';
+      } else {
+        return 'folder';
+      }
     }
   }
   async createThumb() {
@@ -121,13 +145,19 @@ class GalleryImage {
         );
       }
       if (this.getType() == 'photo') {
-        var collage = this.getServerPath();
-        await photosCollage(
-          collage,
-          this.galleryfolder + this.foldername + this.filename + '_thumb.jpg',
-          1,
-          1
-        );
+        // var collage = this.getServerPath();
+        // await photosCollage(
+        //   collage,
+        //   this.galleryfolder + this.foldername + this.filename + '_thumb.jpg',
+        //   1,
+        //   1
+        // );
+        var inputfile = this.getServerPath()[0];
+        var thumbfile =
+          this.galleryfolder + this.foldername + this.filename + '_thumb.jpg';
+        console.log(inputfile);
+        console.log(thumbfile);
+        await photoThumbnail(inputfile, thumbfile);
       }
       if (this.getType() == 'folder') {
         var collage = [];
@@ -142,12 +172,59 @@ class GalleryImage {
         collage = collage.map(
           (i) => this.galleryfolder + this.foldername + this.filename + '/' + i
         );
-        await photosCollage(
-          collage,
-          this.galleryfolder + this.foldername + this.filename + '_thumb.jpg',
-          2,
-          2
+        // await photosCollage(
+        //   collage,
+        //   this.galleryfolder + this.foldername + this.filename + '_thumb.jpg',
+        //   2,
+        //   2
+        // );
+        var inputfile = collage[0];
+        var thumbfile =
+          this.galleryfolder + this.foldername + this.filename + '_thumb.jpg';
+        await photoThumbnail(inputfile, thumbfile);
+      }
+      if (this.getType() == '360') {
+        var folderfile = fs.readdirSync(
+          this.galleryfolder + this.foldername + this.filename + '/'
         );
+        for (var subfile of folderfile) {
+          if (subfile != '.DS_Store' && subfile.search('_thumb') < 0) {
+            if (subfile.search('_') >= 0) {
+              var filename = subfile.substr(0, subfile.search('_'));
+              var extension = subfile.substr(subfile.search('_'));
+            } else {
+              var filename = subfile.substr(0, subfile.lastIndexOf('.'));
+              var extension = '.jpg';
+            }
+            var inputfile =
+              this.galleryfolder +
+              this.foldername +
+              this.filename +
+              '/' +
+              subfile;
+            var thumbfile =
+              this.galleryfolder +
+              this.foldername +
+              this.filename +
+              '/' +
+              filename +
+              '_thumb' +
+              extension;
+            console.log(inputfile);
+            console.log(thumbfile);
+            await photoThumbnail(inputfile, thumbfile);
+          }
+        }
+        var inputfile =
+          this.galleryfolder +
+          this.foldername +
+          this.filename +
+          '/' +
+          this.filename +
+          '.jpg';
+        var thumbfile =
+          this.galleryfolder + this.foldername + this.filename + '_thumb.jpg';
+        await photoThumbnail(inputfile, thumbfile);
       }
 
       this.newflag = true;
@@ -158,7 +235,10 @@ class GalleryImage {
     console.log('del');
     var files = this.getServerPath();
     for (var file of files) {
-      if (this.getType() == 'folder' && file.lastIndexOf('.') <= 0) {
+      if (
+        (this.getType() == 'folder' || this.getType() == '360') &&
+        file.lastIndexOf('.') <= 0
+      ) {
         try {
           await del(file);
         } catch (err) {

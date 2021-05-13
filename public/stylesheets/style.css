@@ -48,9 +48,24 @@ a {
   position: relative;
 } */
 
+.loadSpin {
+  position: fixed;
+  bottom: 50%;
+  right: 50%;
+  z-index: 4;
+}
+
 .modal-body {
   padding: 10px;
   overflow: auto;
+}
+
+.modal-content {
+  position: relative;
+  margin: auto;
+  padding: 0;
+  width: auto;
+  display: table;
 }
 
 /* .modal-body .close {
