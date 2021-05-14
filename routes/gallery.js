@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
   await galleryarray.createThumbs(dirgallery, '');
   var files = galleryarray.getClientPaths('');
   console.log(files);
-  res.render('index', {
+  res.render('gallery', {
     title: 'Express',
     images: files,
     url: req.originalUrl,
@@ -25,7 +25,7 @@ router.get('/:id', async (req, res, next) => {
   await galleryarray.createThumbs(dirgallery, req.params.id);
   var files = galleryarray.getClientPaths(req.params.id);
   console.log(files);
-  res.render('index', {
+  res.render('gallery', {
     title: 'Express',
     images: files,
     url: req.originalUrl,
